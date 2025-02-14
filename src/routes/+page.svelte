@@ -1,5 +1,5 @@
-<div class="bg-bgColor h-screen flex items-center justify-center">
-    <div class="fixed top-0 h-20 px-7 w-full bg-tileColor">
+<div class="bg-midnight h-screen flex items-center justify-center">
+    <div class="fixed top-0 h-20 px-7 w-full bg-lightGrey">
         <div class="flex justify-between items-center h-full">
             <div class="flex space-x-5 items-center">
                 <img class="h-16" src="https://static.vecteezy.com/system/resources/previews/018/931/148/original/cartoon-ticket-icon-png.png" alt="Logo" />
@@ -17,13 +17,13 @@
             </div>
         </div>
         <div class="flex justify-evenly items-center py-20">
-            <div class="h-60 w-md bg-tileColor rounded-lg flex items-center justify-center text-white/15">
+            <div class="h-60 w-md bg-lightGrey rounded-lg flex items-center justify-center text-white/15">
                 Museum 1
             </div>
-            <div class="h-60 w-md bg-tileColor rounded-lg flex items-center justify-center text-white/15">
+            <div class="h-60 w-md bg-lightGrey rounded-lg flex items-center justify-center text-white/15">
                 Museum 2
             </div>
-            <div class="h-60 w-md bg-tileColor rounded-lg flex items-center justify-center text-white/15">
+            <div class="h-60 w-md bg-lightGrey rounded-lg flex items-center justify-center text-white/15">
                 Museum 3
             </div>
         </div>
