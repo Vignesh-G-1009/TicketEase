@@ -1,1 +1,19 @@
-@import 'tailwindcss'
+@import 'tailwindcss';
+@tailwind utilities;
+
+/* :root {
+  --bgColor: #181818;
+  --: #282828;
+} */
+
+/* .text-custom-green {
+  color: var(--custom-green);
+} */
+
+.bg-bgColor {
+  background-color: #181818;
+}
+
+.bg-tileColor {
+  background-color: #282828;
+}
