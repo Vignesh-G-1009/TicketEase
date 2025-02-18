@@ -2,5 +2,30 @@
 
 @theme {
   --color-midnight: #181818;
-  --color-lightGrey : #282828;
+  --color-lightGrey: #282828;
+  --color-darkGrey: #101010;
+}
+
+.input-gradient {
+  position: relative;
+  
+}
+
+.input-gradient::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+  background: linear-gradient(to right, rgb(125, 220, 30), rgb(15, 185, 130));
+}
+
+.input-gradient:hover::before {
+  opacity: 0.5;
+}
+
+.input-gradient:focus-within::before {
+  opacity: 1;
 }
