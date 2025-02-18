@@ -1,0 +1,157 @@
+<script>
+	import { Mail, Lock, Eye, EyeClosed, User } from 'lucide-svelte';
+
+	let showPassword = false;
+	const togglePassword = () => {
+		showPassword = !showPassword;
+	}
+
+	let showConfirm = false;
+	const toggleConfirm = () => {
+		showConfirm = !showConfirm;
+	}
+</script>
+
+<div class="min-h-screen text-white/75 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
+	<div class="flex flex-col items-center justify-stretch space-y-5">
+		<h1 class="h-12 text-4xl font-bold bg-gradient-to-r from-lime-400 to-emerald-400 bg-clip-text text-transparent">
+			Ready to explore?
+		</h1>
+		<h2 class="text-gray-400 pb-3">
+			Book now and start your journey through history and culture!
+		</h2>
+		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl shadow-[0_0_15px_rgba(0, 0, 0, 0.7)] p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
+			<form>
+				<div class="space-y-7">
+					<div class="grid grid-cols-2 gap-3">
+						<div class="relative group input-gradient">
+							<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
+								<User class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
+							</div>
+							<input
+							type="text"
+							value={""}
+							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
+							placeholder="First Name"
+							required
+							/>
+						</div>
+
+						<div class="relative group input-gradient">
+							<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
+								<User class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
+							</div>
+							<input
+							type="text"
+							value={""}
+							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
+							placeholder="Last Name"
+							required
+							/>
+						</div>
+					</div>
+
+					<div class="relative group input-gradient">
+						<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
+							<Mail class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
+						</div>
+						<input
+						type="email"
+						value={""}
+						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
+						placeholder="Email Address"
+						required
+						/>
+					</div>
+					
+					<div class="relative group input-gradient">
+						<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
+							<Lock class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
+						</div>
+						<input
+							type={showPassword ? "text" : "password"}
+							value={""}
+							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
+							placeholder="Password"
+							required
+						/>
+						<button 
+							type="button"
+							on:click={togglePassword}
+							class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointers"
+						>
+							{#if showPassword}
+								<Eye class="w-5 h-5 text-gray-400" />
+							{:else}
+								<EyeClosed class="w-5 h-5 text-gray-400" />
+							{/if}
+						</button>
+					</div>
+					
+					<div class="relative group input-gradient">
+						<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
+							<Lock class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
+						</div>
+						<input
+							type={showConfirm ? "text" : "password"}
+							value={""}
+							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
+							placeholder="Confirm Password"
+							required
+						/>
+						<button 
+							type="button"
+							on:click={toggleConfirm}
+							class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointers"
+						>
+							{#if showConfirm}
+								<Eye class="w-5 h-5 text-gray-400" />
+							{:else}
+								<EyeClosed class="w-5 h-5 text-gray-400" />
+							{/if}
+						</button>
+					</div>
+
+					<button
+						type="submit"
+						class="mt-1 w-full py-3 px-4 rounded-xl bg-gradient-to-br from-lime-500 to-emerald-500 hover:from-lime-600 hover:to-emerald-600
+						font-medium focus:outline-none focus:from-teal-500 focus:to-green-500 transition-all duration-200"
+					>
+						Create Account
+					</button>
+
+					<div class="relative">
+						<div class="absolute inset-0 pt-0.5 flex items-center">
+							<div class="w-full border-[1px] border-gray-800"></div>
+						</div>
+						<div class="relative flex justify-center text-sm">
+						  	<span class="px-2 bg-black text-gray-400">Or continue with</span>
+						</div>
+					</div>
+
+					<button
+						type="button"
+						class="flex items-center justify-center w-full py-3 px-4 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-900 hover:to-gray-950
+						font-medium focus:outline-none focus:from-gray-700 focus:to-gray-8s00 transition-all duration-200"
+					>
+						<img src="./src/assets/search.png" alt="Google" class="h-5 w-5 mr-3">
+						Sign up with Google
+					</button>
+				</div>				
+			</form>
+
+			<div class="mt-6 text-center">
+				<p>
+					Already have an account?
+					<a
+						href="/login"
+						class="pl-1 bg-gradient-to-r from-lime-400 to-emerald-400 bg-clip-text text-transparent 
+						hover:from-lime-600 hover:to-emerald-600 focus:from-teal-500 focus:to-green-500 transition-all duration-200"
+					>
+						Sign In
+					</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
