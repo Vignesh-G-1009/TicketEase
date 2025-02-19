@@ -6,6 +6,52 @@
 		document.title = "Sign Up";
 	});
 
+	import { auth } from "../../firebase";
+	import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+
+	interface Form {
+		firstname: string;
+		lastname: string;
+		email: string;
+		password: string;
+		confirm: string;
+	}
+
+	let userData: Form = {
+		firstname: '',
+		lastname: '',
+		email: '',
+		password: '',
+		confirm: ''
+	}
+
+	const onChange = (event: Event) => {
+		const target = event.target as HTMLInputElement;
+		userData = { ...userData, [target.name]: target.value };
+	};
+
+	const handleSignUp = async (event: Event) => {
+		event.preventDefault();
+
+		if(userData.password !== userData.confirm) {
+			alert("Passwords do not match");
+			return;
+		}
+
+		try {
+			const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+			const user = userCredential.user;
+
+			await updateProfile(user, {
+				displayName: `${userData.firstname} ${userData.lastname}`,
+			});
+
+			window.location.href = "/login";
+		} catch (error: any) {
+			alert(error.message);
+		}
+	};
+
 	let showPassword = $state(false);
 	const togglePassword = () => {
 		showPassword = !showPassword;
@@ -14,16 +60,6 @@
 	let showConfirm = $state(false);
 	const toggleConfirm = () => {
 		showConfirm = !showConfirm;
-	}
-
-	let firstname = $state('');
-	let lastname = $state('');
-	let email = $state('');
-	let password = $state('');
-	let confirm = $state('');
-	const handleSubmit = (event: Event) => {
-		event.preventDefault();
-		console.log('Sign Up: ', {firstname, lastname, email, password, confirm});
 	}
 
 	const handleGoogleSignUp = () => {
@@ -40,7 +76,7 @@
 			Book now and start your journey through history and culture!
 		</h2>
 		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
-			<form onsubmit={handleSubmit}>
+			<form onsubmit={handleSignUp}>
 				<div class="space-y-7">
 					<div class="grid grid-cols-2 gap-3">
 						<div class="relative group input-gradient">
@@ -49,7 +85,8 @@
 							</div>
 							<input
 							type="text"
-							bind:value={firstname}
+							name="firstname"
+							oninput={onChange}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="First Name"
 							required
@@ -62,7 +99,8 @@
 							</div>
 							<input
 							type="text"
-							bind:value={lastname}
+							name="lastname"
+							oninput={onChange}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Last Name"
 							required
@@ -76,7 +114,8 @@
 						</div>
 						<input
 						type="email"
-						bind:value={email}
+						name="email"
+						oninput={onChange}
 						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 						placeholder="Email Address"
 						required
@@ -89,7 +128,8 @@
 						</div>
 						<input
 							type={showPassword ? "text" : "password"}
-							bind:value={password}
+							name="password"
+							oninput={onChange}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Password"
 							required
@@ -113,7 +153,8 @@
 						</div>
 						<input
 							type={showConfirm ? "text" : "password"}
-							bind:value={confirm}
+							name="confirm"
+							oninput={onChange}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Confirm Password"
 							required

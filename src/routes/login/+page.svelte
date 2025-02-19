@@ -12,13 +12,34 @@
 		showPassword = !showPassword;
 	}
 
-	let email = $state('');
-	let password = $state('');
+	import { auth } from '../../firebase';
+	import { signInWithEmailAndPassword } from 'firebase/auth';
 
-	const handleSubmit = (event: Event) => {
+	interface Form {
+		email: string;
+		password: string;
+	}
+
+	let userData: Form = {
+		email: '',
+		password: ''
+	};
+
+	const onChange = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        userData = { ...userData, [target.name]: target.value };
+    };
+
+	const handleSignIn = async (event: Event) => {
 		event.preventDefault();
-		console.log('Login: ', {email, password});
-	} 
+
+		try {
+			await signInWithEmailAndPassword(auth, userData.email, userData.password);
+			window.location.href = "/";
+		} catch (error: any)  {
+			alert(error.message);
+		}
+	};
 
 	const handleGoogleSignIn = () => {
 		console.log("Google Sign In Clicked");
@@ -34,7 +55,7 @@
 			The faster you fuel up, the faster you snag your ticket.
 		</h2>
 		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl shadow-[0_0_15px_rgba(0, 0, 0, 0.7)] p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
-			<form onsubmit={handleSubmit}>
+			<form onsubmit={handleSignIn}>
 				<div class="space-y-7">
 					<div class="relative group input-gradient">
 						<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
@@ -42,7 +63,8 @@
 						</div>
 						<input
 						type="email"
-						bind:value={email}
+						name="email"
+						oninput={onChange}
 						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 						placeholder="Email Address"
 						required
@@ -55,7 +77,8 @@
 						</div>
 						<input
 							type={showPassword ? "text" : "password"}
-							bind:value={password}
+							name="password"
+							oninput={onChange}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Password"
 							required
