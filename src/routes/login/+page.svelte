@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { Mail, Lock, Eye, EyeClosed } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
-	let showPassword = false;
+	onMount(() => {
+		document.title = "Sign In";
+	});
+
+	let showPassword = $state(false);
+
 	const togglePassword = () => {
 		showPassword = !showPassword;
 	}
 
-	let email = '';
-	let password = '';
+	let email = $state('');
+	let password = $state('');
+
 	const handleSubmit = (event: Event) => {
 		event.preventDefault();
 		console.log('Login: ', {email, password});
@@ -27,7 +34,7 @@
 			The faster you fuel up, the faster you snag your ticket.
 		</h2>
 		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl shadow-[0_0_15px_rgba(0, 0, 0, 0.7)] p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
-			<form on:submit={handleSubmit}>
+			<form onsubmit={handleSubmit}>
 				<div class="space-y-7">
 					<div class="relative group input-gradient">
 						<div class="absolute inset-y-0 l-0 pl-4 flex items-center pointer-events-none">
@@ -55,7 +62,7 @@
 						/>
 						<button 
 							type="button"
-							on:click={togglePassword}
+							onclick={togglePassword}
 							class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointers"
 						>
 							{#if showPassword}
@@ -105,7 +112,7 @@
 
 					<button
 						type="button"
-						on:click={handleGoogleSignIn}
+						onclick={handleGoogleSignIn}
 						class="flex items-center justify-center w-full py-3 px-4 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-900 hover:to-gray-950
 						font-medium focus:outline-none focus:from-gray-700 focus:to-gray-8s00 transition-all duration-200"
 					>

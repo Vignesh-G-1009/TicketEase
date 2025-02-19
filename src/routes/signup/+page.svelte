@@ -1,14 +1,33 @@
-<script>
+<script lang="ts">
 	import { Mail, Lock, Eye, EyeClosed, User } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
-	let showPassword = false;
+	onMount(() => {
+		document.title = "Sign Up";
+	});
+
+	let showPassword = $state(false);
 	const togglePassword = () => {
 		showPassword = !showPassword;
 	}
 
-	let showConfirm = false;
+	let showConfirm = $state(false);
 	const toggleConfirm = () => {
 		showConfirm = !showConfirm;
+	}
+
+	let firstname = $state('');
+	let lastname = $state('');
+	let email = $state('');
+	let password = $state('');
+	let confirm = $state('');
+	const handleSubmit = (event: Event) => {
+		event.preventDefault();
+		console.log('Sign Up: ', {firstname, lastname, email, password, confirm});
+	}
+
+	const handleGoogleSignUp = () => {
+		console.log("Google Sign Up Clicked");
 	}
 </script>
 
@@ -20,8 +39,8 @@
 		<h2 class="text-gray-400 pb-3">
 			Book now and start your journey through history and culture!
 		</h2>
-		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl shadow-[0_0_15px_rgba(0, 0, 0, 0.7)] p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
-			<form>
+		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
+			<form onsubmit={handleSubmit}>
 				<div class="space-y-7">
 					<div class="grid grid-cols-2 gap-3">
 						<div class="relative group input-gradient">
@@ -30,7 +49,7 @@
 							</div>
 							<input
 							type="text"
-							value={""}
+							bind:value={firstname}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="First Name"
 							required
@@ -43,7 +62,7 @@
 							</div>
 							<input
 							type="text"
-							value={""}
+							bind:value={lastname}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Last Name"
 							required
@@ -57,7 +76,7 @@
 						</div>
 						<input
 						type="email"
-						value={""}
+						bind:value={email}
 						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 						placeholder="Email Address"
 						required
@@ -70,14 +89,14 @@
 						</div>
 						<input
 							type={showPassword ? "text" : "password"}
-							value={""}
+							bind:value={password}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Password"
 							required
 						/>
 						<button 
 							type="button"
-							on:click={togglePassword}
+							onclick={togglePassword}
 							class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointers"
 						>
 							{#if showPassword}
@@ -94,14 +113,14 @@
 						</div>
 						<input
 							type={showConfirm ? "text" : "password"}
-							value={""}
+							bind:value={confirm}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Confirm Password"
 							required
 						/>
 						<button 
 							type="button"
-							on:click={toggleConfirm}
+							onclick={toggleConfirm}
 							class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointers"
 						>
 							{#if showConfirm}
@@ -131,6 +150,7 @@
 
 					<button
 						type="button"
+						onclick={handleGoogleSignUp}
 						class="flex items-center justify-center w-full py-3 px-4 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-900 hover:to-gray-950
 						font-medium focus:outline-none focus:from-gray-700 focus:to-gray-8s00 transition-all duration-200"
 					>
