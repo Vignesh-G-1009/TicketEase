@@ -61,6 +61,9 @@
         <nav class="flex justify-between items-center">
             <div class="text-2xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">MuseumPass</div>
             <div class="flex space-x-8">
+                <button onclick={() => window.location.href = "/booknow"}>
+                    Book Now
+                </button>
                 <button>
                     Museums
                 </button>
