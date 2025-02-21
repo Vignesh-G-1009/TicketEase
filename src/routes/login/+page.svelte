@@ -1,8 +1,29 @@
 <script lang="ts">
 	import { Mail, Lock, Eye, EyeClosed } from 'lucide-svelte';
+	import LoadingAnimation from '$lib/loadingAnimation.svelte';
+	import { isPageLoading, startLoading, stopLoading } from '$lib/pageLoading';
 	import { onMount } from 'svelte';
+	import { signIn } from '$lib/auth';
+
+	let email = $state('');
+	let password = $state('');
+	let rememberMe = $state(false);
+	let error = $state('');
+
+	const handleSignIn = async () => {
+		try {
+			startLoading();
+			error = '';
+			await signIn(email, password, rememberMe);
+			window.location.href = '/';
+		} catch (e) {
+			stopLoading();
+			error = "Failed to sign in. Please check your credentials.";
+		}
+	};
 
 	onMount(() => {
+		stopLoading();
 		document.title = "Sign In";
 	});
 
@@ -11,35 +32,6 @@
 	const togglePassword = () => {
 		showPassword = !showPassword;
 	}
-
-	import { auth } from '../../firebase';
-	import { signInWithEmailAndPassword } from 'firebase/auth';
-
-	interface Form {
-		email: string;
-		password: string;
-	}
-
-	let userData: Form = {
-		email: '',
-		password: ''
-	};
-
-	const onChange = (event: Event) => {
-        const target = event.target as HTMLInputElement;
-        userData = { ...userData, [target.name]: target.value };
-    };
-
-	const handleSignIn = async (event: Event) => {
-		event.preventDefault();
-
-		try {
-			await signInWithEmailAndPassword(auth, userData.email, userData.password);
-			window.location.href = "/";
-		} catch (error: any)  {
-			alert(error.message);
-		}
-	};
 
 	const handleGoogleSignIn = () => {
 		console.log("Google Sign In Clicked");
@@ -51,9 +43,13 @@
 		<h1 class="h-12 text-4xl font-bold bg-gradient-to-r from-lime-400 to-emerald-400 bg-clip-text text-transparent">
 			Great to be back!
 		</h1>
-		<h2 class="text-gray-400 pb-3">
-			The faster you fuel up, the faster you snag your ticket.
-		</h2>
+		{#if error}
+			<p class="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent pb-3">{error}</p>
+		{:else}
+			<h2 class="text-gray-400 pb-3">
+				The faster you fuel up, the faster you snag your ticket.
+			</h2>
+		{/if}
 		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl shadow-[0_0_15px_rgba(0, 0, 0, 0.7)] p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
 			<form onsubmit={handleSignIn}>
 				<div class="space-y-7">
@@ -63,8 +59,8 @@
 						</div>
 						<input
 						type="email"
-						name="email"
-						oninput={onChange}
+						id="email"
+						bind:value={email}
 						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 						placeholder="Email Address"
 						required
@@ -77,8 +73,8 @@
 						</div>
 						<input
 							type={showPassword ? "text" : "password"}
-							name="password"
-							oninput={onChange}
+							id="password"
+							bind:value={password}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Password"
 							required
@@ -100,7 +96,7 @@
 						<div class="flex items-center">
 							<input 
 								type="checkbox"
-								id="remember-me"
+								bind:checked={rememberMe}
 								class="h-4 w-4"
 							/>
 							<label for="remenber-me" class="ml-2 block text-sm text-gray-400">
@@ -159,4 +155,9 @@
 			</div>
 		</div>
 	</div>
+	{#if $isPageLoading}
+		<div class="absolute flex items-center justify-center w-full h-screen bg-black/75 backdrop-blur-sm">
+			<LoadingAnimation />
+		</div>
+	{/if}
 </div>

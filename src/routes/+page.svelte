@@ -1,39 +1,62 @@
 <script lang="ts">
-    import { writable } from "svelte/store";
+    import { user, signOut } from "$lib/auth";
+    import LoadingAnimation from "$lib/loadingAnimation.svelte";
+    import { isPageLoading, startLoading, stopLoading } from "$lib/pageLoading";
     import { onMount } from "svelte";
-    import { auth } from "../firebase";
-    import type { User } from "firebase/auth";
 
-    const user = writable<User | null>(null);
+    onMount(() => {
+        stopLoading();
+    });
 
     const handleSignOut = async () => {
         try {
-            await auth.signOut();
+            startLoading();
+            await signOut();
+            window.location.href = "/";
         } catch (error) {
-            console.error(error);
+            console.error("Failed to Sign Out: ", error);
         }
     };
 
-    onMount(() => {
-        const unsubscribe = auth.onAuthStateChanged((authUser) => {
-            if (authUser) {
-                user.set(authUser);
-            } else {
-                user.set(null);
-            }
-        });
+    const getUserName = (name: string) => {
+        const names = name.trim().split(/\s+/);
+        if(names.length === 1) {
+            return { firstname: names[0], lastname: ""};
+        }
 
-        return () => unsubscribe();
-    });
+        const firstname = names.slice(0, -1).join(" ");
+        const lastname = names[names.length - 1];
 
-    const getUserName = (displayName: string | null | undefined) => {
-        if(!displayName) return { firstname: "", lastname: "" };
-        const [firstname, lastname] = displayName.split(" ");
         return { firstname, lastname };
     };
+
+    const handleSignIn = () => {
+        try {
+            startLoading();
+            window.location.href = "/login";
+        } catch (error) {
+            stopLoading();
+            console.error("Failed to Sign In: ", error);
+        }
+    }
+
+    const handleSignUp = () => {
+        try {
+            startLoading();
+            window.location.href = "/signup";
+        } catch (error) {
+            stopLoading();
+            console.error("Failed to Sign Up: ", error);
+        }
+    }
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white/75">
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white/75">    
+    {#if $isPageLoading}
+        <div class="absolute flex items-center justify-center w-full h-screen bg-black/75 backdrop-blur-sm">
+            <LoadingAnimation />
+        </div>
+    {/if}
     <div class="mx-12 pt-8">
         <nav class="flex justify-between items-center">
             <div class="text-2xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">MuseumPass</div>
@@ -58,14 +81,14 @@
                     </button>
                 {:else}
                     <button 
-                        onclick={() => window.location.href = "/login"}
+                        onclick={handleSignIn}
                         class="px-4 py-2 rounded-lg border-[1px] border-white hover:bg-white hover:text-black 
                         focus:bg-white/75 focus:text-black transition-all duration-200"
                     >
                         Sign In
                     </button>
                     <button 
-                        onclick={() => window.location.href = "/signup"}
+                        onclick={handleSignUp}
                         class="px-4 py-2 rounded-lg bg-gradient-to-br from-lime-500 to-emerald-500 hover:from-lime-600 hover:to-emerald-600 
                         text-white focus:from-teal-500 focus:to-green-500 transition-all duration-200"
                     >
@@ -74,17 +97,9 @@
                 {/if}
             </div>
         </nav>
-        {#if $user}
-            <div class="w-full flex flex-col items-center justify-center mt-80 space-y-4">
-                <p class="text-xl">Hello, {$user.displayName ? getUserName($user.displayName).firstname : $user.email}</p>
-                <p class="text-xl">Fullname: {$user.displayName} </p>
-            </div>
-        {:else}
-            <div class="w-full flex flex-col items-center justify-center mt-80 space-y-4">
-                <p class="text-xl">Welcome to MuseumPass</p>
-                <p class="text-xl">Please Login to Continue</p>
-            </div>
-        {/if}
+        <div class="flex flex-col items-center text-center mb-20">
+            <h1>Discover India's Heritage</h1>
+        </div>
     </div>
 </div>
 

@@ -1,56 +1,39 @@
 <script lang="ts">
 	import { Mail, Lock, Eye, EyeClosed, User } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { signUp } from '$lib/auth';
+    import { isPageLoading, startLoading, stopLoading } from '$lib/pageLoading';
+    import LoadingAnimation from '$lib/loadingAnimation.svelte';
 
-	onMount(() => {
-		document.title = "Sign Up";
-	});
-
-	import { auth } from "../../firebase";
-	import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-
-	interface Form {
-		firstname: string;
-		lastname: string;
-		email: string;
-		password: string;
-		confirm: string;
-	}
-
-	let userData: Form = {
-		firstname: '',
-		lastname: '',
-		email: '',
-		password: '',
-		confirm: ''
-	}
-
-	const onChange = (event: Event) => {
-		const target = event.target as HTMLInputElement;
-		userData = { ...userData, [target.name]: target.value };
-	};
+	let email = $state('');
+	let password = $state('');
+	let confirm = $state('');
+	let firstname = $state('');
+	let lastname = $state('');
+	let error = $state('');
 
 	const handleSignUp = async (event: Event) => {
 		event.preventDefault();
-
-		if(userData.password !== userData.confirm) {
-			alert("Passwords do not match");
-			return;
-		}
-
 		try {
-			const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-			const user = userCredential.user;
-
-			await updateProfile(user, {
-				displayName: `${userData.firstname} ${userData.lastname}`,
-			});
-
-			window.location.href = "/login";
-		} catch (error: any) {
-			alert(error.message);
+			startLoading();
+			error = '';
+			if(password !== confirm) {
+				error = "Passwords do not match.";
+				stopLoading();
+				return;
+			}
+			await signUp(email, password, firstname, lastname);
+			window.location.href = '/';
+		} catch (e) {
+			stopLoading();
+			error = "Failed to create account. Please try again.";
 		}
 	};
+
+	onMount(() => {
+		stopLoading();
+		document.title = "Sign Up";
+	});
 
 	let showPassword = $state(false);
 	const togglePassword = () => {
@@ -72,9 +55,13 @@
 		<h1 class="h-12 text-4xl font-bold bg-gradient-to-r from-lime-400 to-emerald-400 bg-clip-text text-transparent">
 			Ready to explore?
 		</h1>
-		<h2 class="text-gray-400 pb-3">
-			Book now and start your journey through history and culture!
-		</h2>
+		{#if error}
+			<p class="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent pb-3">{error}</p>
+		{:else}
+			<h2 class="text-gray-400 pb-3">
+				Book now and start your journey through history and culture!
+			</h2>
+		{/if}
 		<div class="w-md bg-gradient-to-b from-gray-900 to-black rounded-xl p-8 border-[1.5px] border-gray-800 backdrop-blur-sm">
 			<form onsubmit={handleSignUp}>
 				<div class="space-y-7">
@@ -85,8 +72,8 @@
 							</div>
 							<input
 							type="text"
-							name="firstname"
-							oninput={onChange}
+							id="firstname"
+							bind:value={firstname}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="First Name"
 							required
@@ -99,8 +86,8 @@
 							</div>
 							<input
 							type="text"
-							name="lastname"
-							oninput={onChange}
+							id="lastname"
+							bind:value={lastname}
 							class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Last Name"
 							required
@@ -114,8 +101,8 @@
 						</div>
 						<input
 						type="email"
-						name="email"
-						oninput={onChange}
+						id="email"
+						bind:value={email}
 						class="block w-full pl-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 						placeholder="Email Address"
 						required
@@ -128,8 +115,8 @@
 						</div>
 						<input
 							type={showPassword ? "text" : "password"}
-							name="password"
-							oninput={onChange}
+							id="password"
+							bind:value={password}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Password"
 							required
@@ -153,8 +140,8 @@
 						</div>
 						<input
 							type={showConfirm ? "text" : "password"}
-							name="confirm"
-							oninput={onChange}
+							id="confirm"
+							bind:value={confirm}
 							class="block w-full px-12 pr-3 py-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/80 focus:bg-gray-900/90 placeholder-white/30 transition-all duration-200 focus:outline-none" 
 							placeholder="Confirm Password"
 							required
@@ -171,7 +158,6 @@
 							{/if}
 						</button>
 					</div>
-
 					<button
 						type="submit"
 						class="mt-1 w-full py-3 px-4 rounded-xl bg-gradient-to-br from-lime-500 to-emerald-500 hover:from-lime-600 hover:to-emerald-600
@@ -179,7 +165,6 @@
 					>
 						Create Account
 					</button>
-
 					<div class="relative">
 						<div class="absolute inset-0 pt-0.5 flex items-center">
 							<div class="w-full border-[1px] border-gray-800"></div>
@@ -214,5 +199,10 @@
 				</p>
 			</div>
 		</div>
-	</div>
+	</div>	
+    {#if $isPageLoading}
+        <div class="absolute flex items-center justify-center w-full h-screen bg-black/75 backdrop-blur-sm">
+            <LoadingAnimation />
+        </div>
+    {/if}
 </div>
